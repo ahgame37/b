@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPXLI H Game Download Portal</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #ff4081;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 10px 0;
+            line-height: 1.5;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #ff4081;
+            color: #fff;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #e03570;
+        }
+
+        .language-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px;
+            background-color: #ff4081;
+            color: #fff;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .highlighted-text {
+            color: #ff4081;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle" onclick="toggleLanguage()">EN / ID</div>
+    <div class="container">
+        <h1>HPXLI H Game Download Portal</h1>
+        <p id="message">Checking available links...</p>
+        <p id="instruction"></p>
+        <p id="hostInfo"></p>
+        <button class="button" id="downloadButton" onclick="getDownloadLink()" style="display:none;">Get Download Link</button>
+        <p id="supportMessage" class="highlighted-text"></p>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const uniqueA = params.get("a");
+        const uniqueB = params.get("b");
+        const uniqueC = params.get("c");
+
+        const translations = {
+            en: {
+                nextLink: "The shortlink you are about to go through is:",
+                initialMessage: "Please click the button below to access the link.",
+                instruction: "Please close this tab after clicking the 'Get Download Link' button below to avoid errors.",
+                supportMessage: "Shortlinks are used to support this website. Thank you for your understanding!",
+                limitExceeded: "EN : IP limit exceeded. Please change refresh your IP (airplane mode 10 sec & remove browser) or try again after 25 hours.",
+                hostInfo: "To access the file hosting (e.g., Drive), you need to go through a shortlink first.",
+                currentShortlink: "The shortlink you are about to go through is"
+            },
+            id: {
+                nextLink: "Link selanjutnya Anda",
+                initialMessage: "Silahkan klik tombol di bawah ini untuk mengakses link.",
+                instruction: "Tolong tutup tab ini jika sudah mengklik tombol 'Get Download Link' dibawah agar tidak terjadi error.",
+                supportMessage: "Shortlink digunakan untuk mensupport website ini mohon pengertiannya ya!",
+                limitExceeded: "ID : Batas IP terlampaui. Harap ubah penyegaran IP Anda (mode pesawat 10 detik & hapus browser) atau coba lagi setelah 25 jam.",
+                hostInfo: "Untuk menuju ke hosting file (contoh: Drive) kalian harus melewati shortlink terlebih dahulu.",
+                currentShortlink: "Shortlink yang akan kalian lewati adalah"
+            }
+        };
+        
+        let currentLanguage = navigator.language.startsWith("id") ? "id" : "en";
+        let currentShortlinkService = "";
+
+        function toggleLanguage() {
+            currentLanguage = currentLanguage === "en" ? "id" : "en";
+            updateText();
+        }
+
+        function updateText() {
+            const messageElement = document.getElementById("message");
+            messageElement.textContent = `${translations[currentLanguage].currentShortlink}: `;
+
+            if (currentShortlinkService) {
+                const serviceElement = document.createElement("span");
+                serviceElement.className = "highlighted-text";
+                serviceElement.textContent = currentShortlinkService;
+                messageElement.appendChild(serviceElement);
+            }
+
+            document.getElementById("instruction").textContent = translations[currentLanguage].instruction;
+            document.getElementById("supportMessage").textContent = translations[currentLanguage].supportMessage;
+            document.getElementById("hostInfo").textContent = translations[currentLanguage].hostInfo;
+        }
+
+        function updateShortlinkMessage() {
+            if (visitCounts.a < 1) {
+                currentShortlinkService = "SafelinkU";
+            } else if (visitCounts.b < 1) {
+                currentShortlinkService = "ShrinkEarn";
+            } else if (visitCounts.c < 6) {
+                currentShortlinkService = "Exe.io";
+            } else {
+                document.getElementById("message").textContent = translations[currentLanguage].limitExceeded;
+                return;
+            }
+            updateText();
+        }
+
+        const visitCounts = JSON.parse(localStorage.getItem("visitCounts")) || { a: 0, b: 0, c: 0 };
+
+        if (!uniqueA || !uniqueB || !uniqueC) {
+            document.getElementById("message").textContent = "Error 404 link";
+        } else {
+            const safelinku = `https://sfl.gl/${uniqueA}`;
+            const tpili = `https://tpi.li/${uniqueB}`;
+            const exeio = `https://exe.io/${uniqueC}`;
+
+            function getDownloadLink() {
+                if (visitCounts.a < 3) {
+                    visitCounts.a++;
+                    window.open(safelinku, "_blank");
+                } else if (visitCounts.b < 3) {
+                    visitCounts.b++;
+                    window.open(tpili, "_blank");
+                } else if (visitCounts.c < 3) {
+                    visitCounts.c++;
+                    window.open(exeio, "_blank");
+                } else {
+                    document.getElementById("message").textContent = translations[currentLanguage].limitExceeded;
+                }
+                
+                localStorage.setItem("visitCounts", JSON.stringify(visitCounts));
+                updateShortlinkMessage();
+            }
+
+            updateShortlinkMessage();
+            document.getElementById("downloadButton").style.display = "inline-block";
+        }
+    </script>
+</body>
+</html>
